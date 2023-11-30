@@ -2,41 +2,46 @@ import React, { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
-  const studentNameRef = useRef("");
-  const gradeRef = useRef("");
-  const [studentName, setStudentName] = useState("");
-  const [grade, setGrade] = useState("");
+  const studentNameRef = useRef("");    // Use useRef for studentName 
+  const gradeRef = useRef("");      // Use useRef for grade
   const [form, setForm] = useState([]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setForm([...form, { name: studentName, grade }]);
-    setStudentName("");
-    setGrade("");
-    // Clear the ref values
-    studentNameRef.current = "";
-    gradeRef.current = "";
+    
+    // Access current values from the reff hook 
+    const name = studentNameRef.current.value;
+    const studentGrade = gradeRef.current.value;
+
+    
+    if (name && studentGrade) {
+      setForm([...form, { name, grade: studentGrade }]); // Check if the input is not empty
+      
+      // Clear the ref values
+      studentNameRef.current.value = "";
+      gradeRef.current.value = "";
+    }
   };
 
-  const calculateMean = () => {  //function that calculate the mean
+  const calculateMean = () => {
     if (form.length === 0) return 0;
     const totalGrades = form.reduce((acc, row) => acc + parseFloat(row.grade), 0);
     return totalGrades / form.length;
   };
 
-  const heighGrade = () => { //function that calculate the high grade
+  const heighGrade = () => {
     if (form.length === 0) return 0;
     const topGrade = Math.max(...form.map((row) => parseFloat(row.grade)));
     return topGrade;
   };
 
-  const lowestGrade = () => { //function that calculate the lowest grade
+  const lowestGrade = () => {
     if (form.length === 0) return 0;
     const lowGrade = Math.min(...form.map((row) => parseFloat(row.grade)));
     return lowGrade;
   };
 
-  const displayList = () => (  //function to display my form 
+  const displayList = () => (
     <tbody>
       {form.map((row, index) => (
         <tr key={index}>
@@ -60,15 +65,13 @@ function App() {
           <div className="input-row">
             <input
               type="text"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
+              ref={studentNameRef} // Use ref for studentName not use state 
               placeholder="Student name"
               className="student-name"
             />
             <input
               type="number"
-              value={grade}
-              onChange={(e) => setGrade(e.target.value)}
+              ref={gradeRef} // Use ref for grade not a use state
               placeholder="Grade btwn 0-100"
               className="student-grade"
             />
